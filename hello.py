@@ -1,14 +1,13 @@
-# 재고관리 프로그램
-
 import getpass
 import hashlib
+from os import truncate
 
+money = 0
 inventory = {"시발점":0, "뉴런":0, "수분감":0, "드릴":0, "킬캠":0}
 
-with open("save.txt","r") as f :    
-    money = int(f.readlines()[2].split("=")[1].strip())
 
 def menu() : 
+
     i = int(input(f"실행할 항목을 선택하세요. 현재 당신의 잔액은 {money}원 입니다. 1.구매 2.판매 3.재고확인 4.끝내기 : "))
 
     if i == 1 : 
@@ -27,6 +26,12 @@ def menu() :
         print("잘못된 입력입니다.")
         menu()
 
+def quit() :
+    f = open('save.txt','w')
+    f.writelines('id:{}\n'.format(saveid))
+    
+    
+
 def buy() :
     global money
     i = int(input(f"구입할 항목의 번호를 입력하세요. 현재 당신의 잔액은 {money}원 입니다. 1.시발점(1000) 2.뉴런(3000) 3.수분감(5000) 4.드릴(7000) 5.킬캠(9000) : "))
@@ -40,10 +45,12 @@ def buy() :
             print("잔액이 부족합니다.")
 
     elif i == 2 :
+        
         if money >= 3000 :
             print("뉴런을 구매합니다.")
             inventory["뉴런"] += 1
             money -= 3000
+
         else :
             print("잔액이 부족합니다.")
 
@@ -52,6 +59,7 @@ def buy() :
             print("수분감을 구매합니다.")
             inventory["수분감"] += 1
             money -= 5000
+
         else :
             print("잔액이 부족합니다.")
 
@@ -60,6 +68,7 @@ def buy() :
             print("드릴을 구매합니다.")
             inventory["드릴"] += 1
             money -= 7000
+
         else :
             print("잔액이 부족합니다.")
 
@@ -68,6 +77,7 @@ def buy() :
             print("킬캠을 구매합니다.")
             inventory["킬캠"] += 1
             money -= 9000
+
         else :
             print("잔액이 부족합니다.")
 
@@ -85,6 +95,7 @@ def sell() :
             print("시발점을 판매합니다.")
             inventory["시발점"] -= 1
             money += 1000
+
         else :
             print("재고가 부족합니다.")
 
@@ -93,6 +104,7 @@ def sell() :
             print("뉴런을 판매합니다.")
             inventory["뉴런"] -= 1
             money += 3000
+
         else :
             print("재고가 부족합니다.")
 
@@ -101,6 +113,7 @@ def sell() :
             print("수분감을 판매합니다.")
             inventory["수분감"] -= 1
             money += 5000
+
         else :
             print("재고가 부족합니다.")
 
@@ -109,6 +122,7 @@ def sell() :
             print("드릴을 판매합니다.")
             inventory["드릴"] -= 1
             money += 7000
+
         else :
             print("재고가 부족합니다.")
 
@@ -117,87 +131,53 @@ def sell() :
             print("킬캠을 판매합니다.")
             inventory["킬캠"] -= 1
             money += 9000
-        else :
 
+        else :
             print("재고가 부족합니다.")
 
     else : 
-
         print("잘못된 입력입니다.")
-
         sell()
 
     menu()
 
 def inven() :
-
     print(f"현재 당신의 재고 : {inventory.items()}입니다.")
-
     menu()
-
-def id() :
-
-    inputid = input("아이디를 입력하세요 : ")
-
-    saveid = f.readlines()[0].split("=")[1].strip()
-
-    while inputid != saveid :
-
-        print("잘못된 아이디입니다.")
-
-        id()
-
-def pw() :
-
-    inputpw = hashlib.sha256(getpass.getpass('패스워드를 입력하세요 : ').encode()).hexdigest()
-
-    savepw = f.readlines()[2].split("=")[1]
-
-    while inputpw != savepw :
-
-        print("잘못된 비밀번호입니다.")
-
-        pw()
     
 def login() :
-
+    global saveid,savepw,money, inventory
     f = open("save.txt","r")
-    
-    saveid = f.readline().split("=")[1].strip()
-        
+    saveid = f.readline().split("=")[1].strip()   
     savepw = f.readline().split("=")[1].strip()
+    money = int(f.readlines().split("=")[1].strip())
+    inventory['시발점'] = f.readline().split("=")[1].strip()
+    inventory['시발점'] = f.readline().split("=")[1].strip()
+    inventory['시발점'] = f.readline().split("=")[1].strip()
+    inventory['시발점'] = f.readline().split("=")[1].strip()
+    inventory['시발점'] = f.readline().split("=")[1].strip()
         
     while True :
-        
         inputid = input("아이디를 입력하세요 : ")
-        
         if inputid == saveid :            
 
             while True :
-
                 inputpw = hashlib.sha256(getpass.getpass('패스워드를 입력하세요 : ').encode()).hexdigest()
-
                 if inputpw == savepw :
-
                     print("환영합니다, {}님!".format(saveid))
-
                     break
 
                 else :
-
                     print("잘못된 패스워드입니다.")
-
                 continue
-
             break
 
         else :
-            
             print("잘못된 아이디입니다.")
-
             continue
+    f.close()
 
-login()
-
-menu()
-
+        
+if __name__ == '__main__':
+    login()
+    menu()
